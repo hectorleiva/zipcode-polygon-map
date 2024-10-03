@@ -1,0 +1,15 @@
+{
+  "name": "google_map_census_data_read",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@turf/turf": "^7.1.0",
+    "shapefile": "^0.6.6"
+  }
+}

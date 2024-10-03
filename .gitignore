@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log
+.DS_Store
+.idea/
+.vscode/
+
+*.cpg
+*.dbf
+*.prj
+*.shp*
+*.shx
+*.csv
+*.zip
+
+output.geojson
