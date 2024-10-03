@@ -27,8 +27,6 @@ shapefile
       // result.value contains the feature data with properties and geometry
       const { properties, geometry } = result.value;
 
-      console.log(properties, geometry.type, JSON.stringify(geometry));
-
       const geojosnFeature = {
         type: "FeatureCollection",
         properties: {
