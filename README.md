@@ -36,3 +36,6 @@ jq '.features[] | select(.properties.zipCode == "22031") | .geometry' output.geo
 Under the `site/index.js` file, the `customCoordinates` should now be filled in by the `geometry` data that was parsed from the earlier step.
 
 Example of the data being visualized can be found here: https://jsfiddle.net/mcry9o1z/31/
+
+Screenshot example:
+![image](./example_screenshot.png)
