@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const shapefilePath = "./census_data/tl_2023_us_zcta520.shp";
 const dbfFilePath = "./census_data/tl_2023_us_zcta520.dbf";
-const writeStream = fs.createWriteStream("output-limited.geojson");
+const writeStream = fs.createWriteStream("output.geojson");
 
 writeStream.write('{"type":"FeatureCollection","features":[');
 
@@ -43,7 +43,7 @@ shapefile
 
       writeStream.write(JSON.stringify(geojosnFeature));
 
-      return source.read().then(endRun);
+      return source.read().then(processFeature);
     }),
   )
   .catch((error) => console.error(error.stack));

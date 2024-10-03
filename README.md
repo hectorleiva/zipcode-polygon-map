@@ -19,9 +19,20 @@ Unzip the data into the `census_data/` directory
 
 ## Formatting the data
 
-Ensure that the files that are defined in the `index.js` are adjusted for the files that are output in the `census_data/` directory.
+Ensure that the files that are defined in the `index.js` in the following lines:
+
+```javascript
+const shapefilePath = "./census_data/tl_2023_us_zcta520.shp";
+const dbfFilePath = "./census_data/tl_2023_us_zcta520.dbf";
+```
+
+are adjusted for the files that are in the `census_data/` directory.
 
 Running `node index.js` should now generate a `output.geojson` file that contains all of the Census Zip data converted into a Geojson format.
+
+The `output.geojson` file will be roughly ~1.2GB in size.
+
+Use `less output.geojson` to view the file (if needed).
 
 ## Extracting the data
 
