@@ -28,7 +28,7 @@ const dbfFilePath = "./census_data/tl_2023_us_zcta520.dbf";
 
 are adjusted for the files that are in the `census_data/` directory.
 
-Running `node index.js` should now generate a `output.geojson` file that contains all of the Census Zip data converted into a Geojson format.
+Running `node index.js` should now generate two outputs `output.geojson` file that contains all of the Census Zip data converted into a Geojson format and a `output.json` file that is a series of JSON objects broken up by `\n` breaks to make it easier to stream the file and convert the line back into a JSON object later on.
 
 The `output.geojson` file will be roughly ~1.2GB in size.
 
