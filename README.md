@@ -42,6 +42,17 @@ Using `jq`, you can specify a zipcode to return back only the geometry of the zi
 jq '.features[] | select(.properties.zipCode == "22031") | .geometry' output.geojson`
 ```
 
+### Immediately insert the data to a Postgres database
+
+It is optional if you want to immediately store the data in a database.
+
+`docker-compose.yml` will stand up a basic Postgres container with the PostGIS extension enabled. The `init.sql` file will create the table `zipcode_polygons_table`;
+
+```bash
+docker-compose up -d
+INSERT_TO_POSTGRES=true && node index.js
+```
+
 ## Visualizing the data
 
 Under the `site/index.js` file, the `customCoordinates` should now be filled in by the `geometry` data that was parsed from the earlier step.

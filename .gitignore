@@ -13,3 +13,4 @@ npm-debug.log
 *.zip
 
 output.geojson
+output.json
