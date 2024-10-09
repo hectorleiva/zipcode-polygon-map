@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Data Layer: Simple</title>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Simple Data Layer</h1>
+    <div id="map"></div>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY&callback=initMap&v=weekly&libraries=geometry"
+      defer
+    ></script>
+    <script>
+      let map;
+
+      async function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 14,
+          center: { lat: 39.1517426, lng: -85.7252769 },
+        });
+        map.data.setStyle({
+          fillColor: "green",
+        });
+
+        map.data.loadGeoJson(
+          "http://localhost:8000?zipcodes=47236",
+          null,
+          (features) => {
+            features.forEach((feature) => {
+              const center = calculatePolygonCenter(feature.getGeometry());
+
+              const zipcode = feature.getProperty("zipcode");
+
+              new google.maps.Marker({
+                position: center,
+                map,
+                label: zipcode,
+              });
+            });
+          },
+        );
+        fetchAdditionalGeoJson();
+      }
+
+      function calculatePolygonCenter(polygon) {
+        const bounds = new google.maps.LatLngBounds();
+        polygon.getArray().forEach((path) => {
+          path.getArray().forEach((latLng) => {
+            bounds.extend(latLng);
+          });
+        });
+        return bounds.getCenter();
+      }
+
+      function fetchAdditionalGeoJson() {
+        fetch("http://localhost:8000?zipcodes=47203")
+          .then((response) => response.json())
+          .then((data) => {
+            map.data.addGeoJson(data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      window.initMap = initMap;
+    </script>
+    <script></script>
+  </body>
+</html>
