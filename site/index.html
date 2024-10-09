@@ -12,6 +12,17 @@
         margin: 0;
         padding: 0;
       }
+      .custom-label {
+        background-color: white;
+        border: 1px solid black;
+        padding: 2px 5px;
+        font-size: 14px;
+        color: black;
+        white-space: nowrap;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+      }
     </style>
   </head>
 
@@ -26,6 +37,48 @@
       let map;
 
       async function initMap() {
+        class CustomLabel extends google.maps.OverlayView {
+          constructor(position, text, map) {
+            super();
+            this.position = position;
+            this.text = text;
+            this.div = null;
+            this.setMap(map);
+          }
+
+          onAdd() {
+            const div = document.createElement("div");
+            div.className = "custom-label";
+            div.innerText = this.text;
+
+            // Append the div to the map overlay layer
+            const panes = this.getPanes();
+            panes.overlayLayer.appendChild(div);
+            this.div = div;
+          }
+
+          draw() {
+            const projection = this.getProjection();
+            const position = projection.fromLatLngToDivPixel(this.position);
+
+            // Position the custom label
+            const div = this.div;
+            if (div) {
+              div.style.left = `${position.x}px`;
+              div.style.top = `${position.y}px`;
+              div.style.position = "absolute";
+              div.style.transform = "translate(-50%, -100%)"; // Center the label
+            }
+          }
+
+          onRemove() {
+            if (this.div) {
+              this.div.parentNode.removeChild(this.div);
+              this.div = null;
+            }
+          }
+        }
+
         map = new google.maps.Map(document.getElementById("map"), {
           zoom: 14,
           center: { lat: 39.1517426, lng: -85.7252769 },
@@ -43,15 +96,11 @@
 
               const zipcode = feature.getProperty("zipcode");
 
-              new google.maps.Marker({
-                position: center,
-                map,
-                label: zipcode,
-              });
+              new CustomLabel(center, zipcode, map);
             });
           },
         );
-        fetchAdditionalGeoJson();
+        fetchAdditionalGeoJson(CustomLabel, map);
       }
 
       function calculatePolygonCenter(polygon) {
@@ -64,11 +113,36 @@
         return bounds.getCenter();
       }
 
-      function fetchAdditionalGeoJson() {
+      function calculateGeoJsonPolygonCenter(coordinates) {
+        const bounds = new google.maps.LatLngBounds();
+        coordinates[0].forEach((latLng) => {
+          bounds.extend(new google.maps.LatLng(latLng[1], latLng[0]));
+        });
+        return [bounds.getCenter().lng(), bounds.getCenter().lat()];
+      }
+
+      function fetchAdditionalGeoJson(CustomLabel, map) {
         fetch("http://localhost:8000?zipcodes=47203")
           .then((response) => response.json())
           .then((data) => {
             map.data.addGeoJson(data);
+
+            data.features.forEach((feature) => {
+              const geometry = feature.geometry;
+              if (geometry && geometry.type === "Polygon") {
+                const center = calculateGeoJsonPolygonCenter(
+                  geometry.coordinates,
+                );
+
+                const zipcode = feature.properties.zipcode;
+
+                new CustomLabel(
+                  new google.maps.LatLng(center[1], center[0]),
+                  zipcode,
+                  map,
+                );
+              }
+            });
           })
           .catch((error) => {
             console.error("Error:", error);
